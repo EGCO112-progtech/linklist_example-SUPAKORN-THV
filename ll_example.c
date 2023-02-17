@@ -19,9 +19,10 @@ typedef LLnode *LLPtr; // synonym for ListNode*
 
 // prototypes
 
-int deletes( LLPtr *sPtr, int value );
+int deletes( LLPtr *sPtr, char name[SIZE] );
+int delAll( LLPtr *sPtr );
 int isEmpty( LLPtr sPtr );
-void insert( LLPtr *sPtr, int value );
+void insert( LLPtr *sPtr, int valueID, char valueName [SIZE] );
 void printList( LLPtr currentPtr );
 void reverseList( LLPtr currentPtr );
 void instructions( void );
@@ -36,8 +37,7 @@ int main( void )
    //<!-- End of Homework Section -->
 
    instructions(); // display the menu
-   printf( "%s", "? " );
-   scanf( "%u", &choice );
+    scanf( "%u", &choice );
 
    // loop while user does not choose 3
    while ( choice != 3 ) { 
@@ -47,7 +47,7 @@ int main( void )
             printf( "%s", "Enter your id: " );
             scanf( "%d", &idScan );
             printf("%s", "Enter your name: ");
-            gets(nameScan);
+            scanf(" %[^\n]", nameScan);           
             insert( &startPtr, idScan, nameScan ); // insert idScan in list
             printList( startPtr );
             reverseList ( startPtr );
@@ -55,17 +55,18 @@ int main( void )
          case 2: // delete an element
             // if list is not empty
             if ( !isEmpty( startPtr ) ) { 
-               printf( "%s", "Enter number to be deleted: " );
-               scanf( "%d", &idScan );
-
+               printf( "%s", "Enter id or name (case sensitivity) to be deleted: " );
+               scanf(" %[^\n]", nameScan);
+              //scanf( "%d", &idScan );
                // if character is found, remove it
-               if ( deletes( &startPtr, idScan, nameScan ) ) { // remove idScan
-                  printf( "%d deleted.\n", idScan );
+               if ( deletes( &startPtr, nameScan ) ) { // remove idScan
+                  printf( "%s deleted.\n", nameScan );
                   printList( startPtr );
                   reverseList ( startPtr );
+                  printf("\n");
                } // end if
                else {
-                  printf( "%d not found.\n\n", idScan );
+                  printf( "%s not found.\n\n", nameScan );
                } // end else
             } // end if
             else {
@@ -83,6 +84,7 @@ int main( void )
       scanf( "%u", &choice );
    } // end while
   /* Clear all nodes at the end of nodes*/
+   delAll( &startPtr );
    puts( "End of run." );
 } // end main
 
@@ -90,7 +92,7 @@ int main( void )
 void instructions( void )
 { 
    puts( 
-     "Version 2.1 [Homework]\n"
+     "Version 2.8 [Homework]\n"
      "Enter your choice:\n"
       "   1 to insert an element into the list.\n"
       "   2 to delete an element from the list.\n"
@@ -138,32 +140,33 @@ void insert( LLPtr *sPtr, int valueID, char valueName [SIZE] )
       } // end else
    } // end if
    else {
-      printf( "%d not inserted. No memory available.\n", value );
+      printf( "%d %s not inserted. No memory available.\n", valueID, valueName);
    } // end else
 } // end function insert
 
 // delete a list element
-int deletes( LLPtr *sPtr, int value )
+int deletes( LLPtr *sPtr, char name[SIZE] )
 { 
    LLPtr previousPtr; // pointer to previous node in list
    LLPtr currentPtr; // pointer to current node in list
    LLPtr tempPtr; // temporary node pointer
-
+   int value = atoi(name);
+  
    // delete first node
-   if ( value == ( *sPtr )->id ) { 
+   if ( value == ( *sPtr )->id || strcmp( name, ( *sPtr )->name ) == 0 ) { 
       tempPtr = *sPtr; // hold onto node being removed
       *sPtr = ( *sPtr )->nextPtr; // de-thread the node
       if(*sPtr)
       (*sPtr)->pPtr=NULL;
       free( tempPtr ); // free the de-threaded node
-      return value;
+      return 1;
    } // end if
    else { 
       previousPtr = *sPtr;
       currentPtr = ( *sPtr )->nextPtr;
       
       // loop to find the correct location in the list
-      while ( currentPtr != NULL && currentPtr->id != value ) { 
+      while ( currentPtr != NULL && ( currentPtr->id != value && ( strcmp(currentPtr->name,name ) != 0 ))) { 
          previousPtr = currentPtr; // walk to ...  
          currentPtr = currentPtr->nextPtr; // ... next node  
       } // end while
@@ -175,12 +178,29 @@ int deletes( LLPtr *sPtr, int value )
          currentPtr = currentPtr->nextPtr;
          if (currentPtr) currentPtr->pPtr = tempPtr->pPtr;
          free( tempPtr );
-         return value;
+         return 1;
       } // end if
    } // end else
 
    return '\0';
 } // end function delete
+
+// delete a list element
+int delAll( LLPtr *sPtr)
+{ 
+   LLPtr previousPtr; // pointer to previous node in list
+   LLPtr currentPtr; // pointer to current node in list
+   LLPtr tempPtr; // temporary node pointer
+
+   // delete node 
+      tempPtr = *sPtr; // hold onto node being removed
+  while(tempPtr){
+      *sPtr = ( *sPtr )->nextPtr; // de-thread the node
+      printf("Deleting %d %s\n", tempPtr->id, tempPtr->name);
+      tempPtr = *sPtr; // hold onto next node being removed
+    } // end while
+   return '\0';
+} // end function delAll
 
 // return 1 if the list is empty, 0 otherwise
 int isEmpty( LLPtr sPtr )
@@ -200,11 +220,11 @@ void printList( LLPtr currentPtr )
 
       // while not the end of the list
       while ( currentPtr->nextPtr!= NULL ) {
-         printf( "%d --> %s ", currentPtr->id, currentPtr->name );
+         printf( "%d %s -->  ", currentPtr->id, currentPtr->name );
          currentPtr = currentPtr->nextPtr;   
       } // end while
 
-      printf( "%d --> NULL\n",currentPtr->id );
+      printf( "%d %s --> NULL\n", currentPtr->id, currentPtr->name );
        
 
      
@@ -226,12 +246,12 @@ void reverseList( LLPtr currentPtr )
       } // end while
      
       // while not the end of the list
-      while ( currentPtr->pPtr!= NULL) {
-         printf( "%d %s--> ", currentPtr->id, currentPtr->name);
+      while ( currentPtr->pPtr != NULL) {
+         printf( "%d %s --> ", currentPtr->id, currentPtr->name);
          currentPtr = currentPtr->pPtr;   
       } // end while
 
-      printf( "%d %s--> ", currentPtr->id, currentPtr->name);
+      printf( "%d %s --> NULL\n", currentPtr->id, currentPtr->name);
        
 
      
