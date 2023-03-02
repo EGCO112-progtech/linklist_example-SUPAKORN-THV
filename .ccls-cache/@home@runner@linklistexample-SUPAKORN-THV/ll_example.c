@@ -94,7 +94,7 @@ int main( void )
 void instructions( void )
 { 
    puts( 
-     "Version 3.1 [Circular Linked List]\n"
+     "Version 3.2 [Circular Linked List]\n"
      "Enter your choice:\n"
       "   1 to insert an element into the list.\n"
       "   2 to delete an element from the list.\n"
@@ -124,16 +124,18 @@ void insert( LLPtr *headPtr, LLPtr *tailPtr, int valueID, char valueName [SIZE] 
         *tailPtr = newPtr;
         newPtr->nextPtr = newPtr;
         newPtr->pPtr = newPtr;
-        printf("Node initialized!\n");
+        /*printf("Node initialized!\n");*/
       }
       else if (*headPtr == *tailPtr) { //Check if only the first node is inserted (Insert the second node)
-        if (newPtr->id > currentPtr->id){ printf("Only the first node!\n");
+        if (newPtr->id > currentPtr->id){ 
+          /*printf("Only the first node!\n");*/
           *tailPtr = newPtr;
           newPtr->pPtr = currentPtr;
           newPtr->nextPtr = *headPtr;
           currentPtr->nextPtr = newPtr;
         }
-        else { printf("Beginning...! Head x Tail\n");
+        else { 
+          /*printf("Beginning...! Head x Tail\n");*/
           *headPtr = newPtr;
           newPtr->pPtr = *tailPtr;
           newPtr->nextPtr = currentPtr;
@@ -145,11 +147,11 @@ void insert( LLPtr *headPtr, LLPtr *tailPtr, int valueID, char valueName [SIZE] 
          while ( currentPtr != *tailPtr && newPtr->id > currentPtr->id ) {
          previousPtr = currentPtr; // walk to ...               
          currentPtr = currentPtr->nextPtr; // ... next node 
-         printf("Waliking OK!\n");
+         /*printf("Waliking OK!\n");*/
         } // end while  
 
         if(previousPtr == NULL) {//At the beginning
-          printf("Beginning...!\n");
+          /*printf("Beginning...!\n");*/
           *headPtr = newPtr;
           currentPtr->pPtr = newPtr;
           newPtr->pPtr = *tailPtr;
@@ -157,13 +159,13 @@ void insert( LLPtr *headPtr, LLPtr *tailPtr, int valueID, char valueName [SIZE] 
           (*tailPtr)->nextPtr = newPtr;
         } else if (currentPtr != *tailPtr || newPtr->id <= currentPtr->id)
         { //In the Middle
-          printf("Centering...!\n");
+          /*printf("Centering...!\n");*/
           newPtr->pPtr = previousPtr;
           newPtr->nextPtr = currentPtr;
           previousPtr->nextPtr = newPtr;
           currentPtr->pPtr = newPtr;
         } else { //At the final
-          printf("Finalize...!\n");
+          /*printf("Finalize...!\n");*/
           *tailPtr = newPtr;
           currentPtr->nextPtr = newPtr;
           newPtr-> pPtr = currentPtr;
@@ -172,29 +174,6 @@ void insert( LLPtr *headPtr, LLPtr *tailPtr, int valueID, char valueName [SIZE] 
         }
       }                                 
      }
-      /*// insert new node at beginning of list
-      if ( previousPtr == NULL ) { 
-         if(*sPtr) (*sPtr)->pPtr = newPtr; // For not the first add
-         newPtr->nextPtr = *sPtr;
-         if(*tPtr == NULL) { 
-           *tPtr = newPtr; // If the first add set tail as start
-           newPtr->nextPtr = *tPtr;
-           }
-         newPtr->pPtr = *tPtr; //Node to tail
-         *sPtr = newPtr;
-        
-        
-      } // end if
-      else { // insert new node between previousPtr and currentPtr
-         previousPtr->nextPtr = newPtr;
-         newPtr->pPtr = previousPtr; 
-         newPtr->nextPtr = currentPtr;
-         if(currentPtr != *tPtr) currentPtr->pPtr = newPtr; // Not the last
-         else *tPtr = newPtr; //Change tail to the last
- 
-         
-      } // end else
-   } // end if*/
    else {
       printf( "%d %s not inserted. No memory available.\n", valueID, valueName);
    } // end else
@@ -218,7 +197,7 @@ int deletes( LLPtr *headPtr, LLPtr *tailPtr, char name[SIZE] )
         (*tailPtr)->nextPtr = *headPtr;
       }
       else *headPtr = *tailPtr = NULL;
-      printf( "%d %s is about to be deleted.\n", tempPtr->id, tempPtr->name );
+      /*printf( "%d %s is about to be deleted.\n", tempPtr->id, tempPtr->name );*/
       free( tempPtr ); // free the de-threaded node
       return 1;
    } // end if
@@ -238,7 +217,7 @@ int deletes( LLPtr *headPtr, LLPtr *tailPtr, char name[SIZE] )
          previousPtr->nextPtr = currentPtr->nextPtr;
          currentPtr = currentPtr->nextPtr;
          currentPtr->pPtr = tempPtr->pPtr;
-         printf( "%d %s is about to be deleted.\n", tempPtr->id, tempPtr->name );
+         /*printf( "%d %s is about to be deleted.\n", tempPtr->id, tempPtr->name );*/
          free( tempPtr );
          return 1;
       } else if (currentPtr->id == value || ( strcmp(currentPtr->name,name )) == 0) {
@@ -247,7 +226,7 @@ int deletes( LLPtr *headPtr, LLPtr *tailPtr, char name[SIZE] )
          currentPtr = currentPtr->nextPtr;
          currentPtr->pPtr = tempPtr->pPtr;
          *tailPtr = (*tailPtr)->pPtr;
-         printf( "[end] %d %s is about to be deleted.\n", tempPtr->id, tempPtr->name );
+         /*printf( "[end] %d %s is about to be deleted.\n", tempPtr->id, tempPtr->name );*/
          free( tempPtr );
          return 1;
       } // end if
@@ -265,15 +244,15 @@ int delAll( LLPtr *headPtr, LLPtr *tailPtr)
       tempPtr = *headPtr; // hold onto node being removed
   while(tempPtr != *tailPtr ){
       *headPtr = ( *headPtr )->nextPtr; // de-thread the node
-      printf("Deleting %d %s\n", tempPtr->id, tempPtr->name);
+      /*printf("Deleting %d %s\n", tempPtr->id, tempPtr->name);*/
       free(tempPtr);
       tempPtr = *headPtr; // hold onto next node being removed
     } // end while
    if (tempPtr) {
-     printf("Deleting %d %s\n", tempPtr->id, tempPtr->name);
+     /*printf("Deleting %d %s\n", tempPtr->id, tempPtr->name);*/
      free(tempPtr);
      *headPtr = *tailPtr = NULL;
-     printf("Deletion completed\n");
+     /*printf("Deletion completed\n");*/
      } else {
      printf("Node is not initialized\n");
      }
@@ -297,17 +276,13 @@ void printList( LLPtr currentPtr, LLPtr tailPtr )
       puts( "The list is:" );
 
       // while not the end of the list
-     printf("Head is %d [%p]. Tail is %d [%p]\n\n",currentPtr->id, currentPtr, tailPtr->id, tailPtr);
+     /*printf("Head is %d [%p]. Tail is %d [%p]\n\n",currentPtr->id, currentPtr, tailPtr->id, tailPtr);*/
       while ( currentPtr != tailPtr ) {
          printf( "%d %s --> ", currentPtr->id, currentPtr->name);
          currentPtr = currentPtr->nextPtr;
       } // end while
 
-      printf( "%d %s Final --> %d %s\n", currentPtr->id, currentPtr->name, currentPtr->nextPtr->id , currentPtr->nextPtr->name );
-       
-
-     
-       
+      printf( "%d %s --> %d %s\n", currentPtr->id, currentPtr->name, currentPtr->nextPtr->id , currentPtr->nextPtr->name );
    } // end else
 } // end function printList
 
@@ -331,7 +306,7 @@ void reverseList( LLPtr currentPtr, LLPtr tailPtr )
          currentPtr = currentPtr->pPtr;   
       } // end while
 
-      printf( "%d %s Final --> %d %s\n", currentPtr->id, currentPtr->name, currentPtr->pPtr->id , currentPtr->pPtr->name );;
+      printf( "%d %s --> %d %s\n", currentPtr->id, currentPtr->name, currentPtr->pPtr->id , currentPtr->pPtr->name );;
        
 
      
